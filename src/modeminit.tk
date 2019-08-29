@@ -1,0 +1,60 @@
+#!/usr/bin/wish -f
+set tcl_modems_resp INITVALUE
+set reset_counter 0
+set tcl_mem_address 4000
+set tcl_mem_read_address 4010
+#set tcl_mem_dump_resp FF FF FF FF FF
+set tcl_mem_tag 11;
+
+#container for meory widgets
+frame .memory_access 
+#container for board initialization
+frame .board_initialization
+
+button .modeminit -text HC11_Initialisation -command {
+  modeminit
+  unlink_init
+  set reset_counter [expr $reset_counter + 1]
+}
+
+button .memdump -text memory_dump -command {
+  mem_dump 
+  unlink_mem_dump
+}
+
+#button .unlink -text unlink_c_tcl -command unlink
+entry .hc11resp -width 26 -relief sunken -textvariable tcl_modems_resp
+label .reset_counter -width 6 -relief sunken -textvariable reset_counter
+
+#entrys for memory accsess
+entry .mem_dump_start_addr -width 4 -relief sunken -textvariable tcl_mem_address
+entry .mem_modify_addr -width 4 -relief sunken -textvariable tcl_mem_read_address
+entry .mem_tag -width 2 -relief sunken -textvariable tcl_mem_tag
+message .mem_dump_message -width 36c -justify left -relief raised -bd 2  -textvariable tcl_mem_dump_resp
+
+#packager
+pack .modeminit .hc11resp .reset_counter -side left -in .board_initialization -anchor w
+pack .board_initialization -side top -anchor w
+pack .memdump .mem_tag -side left -in .memory_access -anchor w
+pack .memory_access -side left -anchor nw -expand 1\
+                      -padx 1m -pady 2m
+pack .mem_modify_addr .mem_tag -in .memory_access -side left -anchor nw -expand 1\
+                      -padx 1m -pady 2m
+pack .mem_dump_message -side top -in .memory_access -anchor w
+
+#bindings
+bind .mem_modify_addr <Return> {
+                                    set tcl_mem_address $tcl_mem_address
+                                    mem_dump
+                                    unlink_mem_dump
+                                    }
+
+bind .mem_tag <Return> {
+                                    mem_modify
+                                    unlink_mem_modify
+                                    mem_dump
+                                    unlink_mem_dump
+
+                                    }
+
+

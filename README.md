@@ -8,7 +8,11 @@ git clone https://github.com/guitarxuser/hc11tk.git
 
 As requirement you need tcl tk development tools
 
-To build the app please go to the src directory and do:
+To build the app please go to the src directory: 
+
+cd hc11tk/src
+
+and do:
 
 make
 

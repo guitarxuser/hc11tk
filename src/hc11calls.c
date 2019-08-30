@@ -163,7 +163,8 @@ out_message init_modem_low_level()   /* I - Serial port file */
     options.c_oflag     &= ~OPOST;
     options.c_cc[VMIN]  = 26; /*"\n\n\000ing-buero kerber  v1.1!"*/
     options.c_cc[VTIME] = 10;/*10 x 0.1 s = 1 sec*/
-
+    cfsetispeed(&options, B9600);
+    cfsetospeed(&options, B9600);
     /* set the options */
     tcsetattr(fd, TCSANOW, &options); 
 

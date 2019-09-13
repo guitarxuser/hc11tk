@@ -1,0 +1,64 @@
+#!/usr/bin/wish -f
+#
+# VARIABLES
+
+set MESSAGE {
+No communication now }
+
+set tcl_string_2_send jajashel 
+set tcl_string_2_receive nochnixda
+
+#container for meory widgets
+
+#frame .memory_access 
+
+#container for board initialization
+#frame .board_initialization
+
+
+
+button .receive_on -text receive_on -command {
+  receive_string
+  set MESSAGE [linsert $MESSAGE end  $tcl_string_2_receive]
+  unlink_receive_string
+}
+
+
+
+#entrys for message send/receive accsess
+
+message .receive_string -width 36c -justify left -relief raised -bd 2  -textvariable tcl_string_2_receive
+entry .send_string -width 46 -relief sunken -textvariable tcl_string_2_send
+listbox .messages -xscrollcommand { .xscroll set } \
+                -yscrollcommand { .yscroll set } \
+                -listvariable MESSAGE
+scrollbar .yscroll -orient vertical   -command { .messages yview }
+scrollbar .xscroll -orient horizontal -command { .messages xview }
+
+#packager
+
+pack .messages -side left    -fill both  -expand true
+pack .yscroll -side right   -fill y
+pack .xscroll -side bottom  -fill x
+pack .receive_on -side top -anchor w
+
+pack .send_string  -side left -anchor nw -expand 1\
+                      -padx 1m -pady 2m
+
+
+#bindings
+
+bind .send_string <Return> {
+                               modeminit
+                               send_string
+                               unlink_init
+                               modemclose
+                              set MESSAGE [linsert $MESSAGE end  $tcl_string_2_send]
+                             .send_string selection range 0 end
+                             .send_string delete sel.first sel.last 
+                               unlink_send_string
+                                  }
+
+
+
+

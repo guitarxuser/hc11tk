@@ -1,0 +1,38 @@
+set Colors {
+
+black blue brown cyan gray green magenta orange pink
+
+purple red tomato turquoise violet wheat white yellow }
+
+ 
+
+ listbox .color -xscrollcommand { .xscroll set } \
+                -yscrollcommand { .yscroll set } \
+                -listvariable Colors   
+
+ scrollbar .yscroll -orient vertical   -command { .color yview }
+ scrollbar .xscroll -orient horizontal -command { .color xview }
+
+ label .l1 -text "Name" -anchor w
+ entry .e1 -textvariable my_text  
+
+bind .e1 <Return> {
+    set Colors [linsert $Colors end  $my_text] 
+   .e1 selection range 0 end 
+   .e1 delete sel.first sel.last 
+    unset my_text  
+             }
+ 
+#    foreach line $Colors { .color insert end $line }
+
+
+
+pack .color   -side left    -fill both  -expand true     
+pack .yscroll -side right   -fill y
+pack .xscroll -side bottom  -fill x 
+pack .e1      -side bottom  -fill y 
+
+
+
+
+  

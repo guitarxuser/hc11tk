@@ -38,10 +38,10 @@ void set_up_the_serial_dev(int fd)
 {
       struct termios options;
     /* open the port */
-    fd = open(SERIAL_DEV, O_RDWR | O_NOCTTY | O_NDELAY);
+    fd = open(device, O_RDWR | O_NOCTTY | O_NDELAY);
     if (fd <0)
         {
-        	fd = open(SERIAL_DEV, O_RDWR | O_NOCTTY | O_NDELAY);
+        	fd = open(device, O_RDWR | O_NOCTTY | O_NDELAY);
         }
     fcntl(fd, F_SETFL, 0);
 
@@ -179,7 +179,7 @@ out_message init_modem_low_level(int closure)   /* I - Serial port file */
     /* open the port */
     if(closure == TO_OPEN)
       {
-    fd = open(SERIAL_DEV, O_RDWR | O_NOCTTY | O_NDELAY);
+    fd = open(device, O_RDWR | O_NOCTTY | O_NDELAY);
     fcntl(fd, F_SETFL, 0);
       
     /* get the current options */
@@ -295,31 +295,34 @@ out_message  hc11_cmd_mm(int fd,const char *memory_address,const char *memory_ta
 
  ***************************************************************************/
 
-out_message  send_string(int fd,char *inp_str)
+out_message  send_string(int fd,const char *inp_str)
 {
+  char buffer[64000]; /*Input buffer */
+  char *bufptr;      /* Current char in buffer */
   char *preamble="FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\n";
-  char *buffer;
+  //char *buffer;
   size_t inp_str_len;
   char ascii_length[3];
   char text_begin[2];
   char text_end[2];
   out_message modem_response;
-
-  change_blank_to_rep(inp_str);
-  inp_str_len=strlen(inp_str);
+  bufptr=buffer;
+  strcpy(bufptr,inp_str);
+  change_blank_to_rep(bufptr);
+  inp_str_len=strlen(bufptr);
   sprintf(text_begin,"%c",STX);
   sprintf(text_end,"%c",ETX);
   sprintf(ascii_length,"%d",(int)inp_str_len);
   fprintf(stderr,"ascii_length=%s\n",ascii_length);
-  buffer=malloc((size_t)inp_str_len+3+4096);/*aligned biffer to 4K+3 bytes for strlen(e_x)=3*/
-  strcpy(buffer,inp_str);
-  strcat(buffer,ascii_length);
-  strcat(buffer,"e_x");/*this is the sieg_proc*/
-  modem_response.status=write(fd,buffer,strlen(buffer));
+  //buffer=malloc((size_t)inp_str_len+3+4096);/*aligned biffer to 4K+3 bytes for strlen(e_x)=3*/
+ // strcpy(bufptr,inp_str);
+  strcat(bufptr,ascii_length);
+  strcat(bufptr,"e_x");/*this is the sieg_proc*/
+  modem_response.status=write(fd,bufptr,strlen(buffer));
   write(fd,"\n",1);  
   fprintf(stderr,"%s\n",buffer); 
   write(fd,text_end,strlen(text_end));
-  free(buffer);
+  //free(buffer);
  return modem_response;
  
 }
@@ -356,7 +359,7 @@ static  void receive_string_poller(int signo)
      return; 
 }
 
-out_message  receive_string(int fd,char *out_str)
+out_message  receive_string(int fd,const char *out_str)
 
 {
   extern char receiver_buffer[];

@@ -120,11 +120,17 @@ int receive_string(int fd)
 /*                             */
  /******************************/
 
-  int main(argc, argv)
-
-  int argc;
-  char *argv[];
+  int main(int argc, char* argv[])
   {
+
+  	char* device=argv[1];
+
+  	if (argc <2)
+  	{
+  		fprintf(stderr,"please call ./cserv </dev/pts/number>\n");
+  		return(-1);
+  	}
+
 	  int    mod_answ;
 	  struct termios options;
 
@@ -134,7 +140,7 @@ int receive_string(int fd)
 
 	  /* open the port */
 	  buf_run_ptr=input_buffer;
-	  fd = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NDELAY);
+	  fd = open(device, O_RDWR | O_NOCTTY | O_NDELAY);
 	  fcntl(fd,F_SETOWN,getpid());
 	  fcntl(fd, F_SETFL, O_ASYNC);
 
@@ -148,10 +154,10 @@ int receive_string(int fd)
 	  options.c_iflag     |= IGNCR;
 	  options.c_cc[VMIN]  = 1; /*1 byte*/
 	  options.c_cc[VTIME] = 0;/* no timeout*/
-	  options.c_ispeed=B1200;		/* input speed */
-	  options.c_ospeed=B1200;		/* output speed */
+	  options.c_ispeed=B9600;		/* input speed */
+	  options.c_ospeed=B9600;		/* output speed */
 	  /* set the options */
-	  cfsetospeed(&options,B1200);
+	  cfsetospeed(&options,B9600);
 	  tcsetattr(fd, TCSANOW, &options);
 	  speed=cfgetospeed(&options);
 	  printf("baud rate = %0x\n",speed);

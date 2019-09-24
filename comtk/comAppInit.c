@@ -101,7 +101,7 @@
  out_message get_send_string(int fd,Tcl_Interp *interp)   /* I - Serial port file */
 {
   out_message modem_response; 
-  char *string_2_send_ptr;
+  const char *string_2_send_ptr;
 
 
   string_2_send_ptr = Tcl_GetVar(interp,"tcl_string_2_send",TCL_LEAVE_ERR_MSG);
@@ -121,7 +121,7 @@
  out_message get_receive_string(int fd,Tcl_Interp *interp)   /* I - Serial port file */
 {
   out_message modem_response; 
-  char *string_2_receive_ptr;
+  const char *string_2_receive_ptr;
 
 
   string_2_receive_ptr = Tcl_GetVar(interp,"tcl_string_2_receive",TCL_LEAVE_ERR_MSG);
@@ -366,9 +366,20 @@ extern int		Tktest_Init _ANSI_ARGS_((Tcl_Interp *interp));
 
 int
 main(argc, argv)
+
      int argc;			/* Number of command-line arguments. */
      char **argv;		/* Values of command-line arguments. */
-{
+
+
+
+       	{
+       	if (argc <3)
+        	{
+        		fprintf(stderr,"please call ./comtk com.tk </dev/pts/number>\n");
+        		return(-1);
+        	}
+    //   	fprintf(stderr,"argv %s\n",argv[2]);
+       	device=argv[2];
   Tk_Main(argc, argv, Tcl_AppInit);
   return 0;			/* Needed only to prevent compiler warning. */
 }
@@ -422,17 +433,17 @@ Tcl_AppInit(interp)
    *
    * where "Mod" is the name of the module.
    */
-  Tcl_CreateCommand(interp,"modeminit",call_init_modem,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateCommand(interp,"modemclose",call_close_modem,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateCommand(interp,"unlink_init",call_unlink_init,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateCommand(interp,"mem_dump",call_get_mem_dump,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateCommand(interp,"unlink_mem_dump",call_unlink_mem_dump,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateCommand(interp,"mem_modify",call_get_mem_mod,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateCommand(interp,"unlink_mem_modify",call_unlink_mem_mod,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateCommand(interp,"send_string",call_get_send_string,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateCommand(interp,"receive_string",call_get_receive_string,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateCommand(interp,"unlink_receive_string",call_unlink_receive_string,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateCommand(interp,"unlink_send_string",call_unlink_send_string,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateCommand(interp,"modeminit",(Tcl_CmdProc *)call_init_modem,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateCommand(interp,"modemclose",(Tcl_CmdProc *)call_close_modem,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateCommand(interp,"unlink_init",(Tcl_CmdProc *)call_unlink_init,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateCommand(interp,"mem_dump",(Tcl_CmdProc *)call_get_mem_dump,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateCommand(interp,"unlink_mem_dump",(Tcl_CmdProc *)call_unlink_mem_dump,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateCommand(interp,"mem_modify",(Tcl_CmdProc *)call_get_mem_mod,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateCommand(interp,"unlink_mem_modify",(Tcl_CmdProc *)call_unlink_mem_mod,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateCommand(interp,"send_string",(Tcl_CmdProc *)call_get_send_string,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateCommand(interp,"receive_string",(Tcl_CmdProc *)call_get_receive_string,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateCommand(interp,"unlink_receive_string",(Tcl_CmdProc *)call_unlink_receive_string,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateCommand(interp,"unlink_send_string",(Tcl_CmdProc *)call_unlink_send_string,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
   /*
    * Call Tcl_CreateCommand for application-specific commands, if
    * they weren't already created by the init procedures called above.

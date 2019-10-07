@@ -9,6 +9,7 @@ git clone https://github.com/guitarxuser/hc11tk.git
 As requirement you need tcl tk development tools:
 
 sudo apt-get install tcl-dev
+
 sudo apt-get install tk-dev
 
 To build the app please go to the src directory: 

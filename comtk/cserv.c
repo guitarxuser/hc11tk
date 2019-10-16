@@ -94,9 +94,9 @@ int receive_string(int fd)
     printf("nbytes=%d\n   buf_run_ptr=%p input_buf_ptr =%p\n",(int)nbytes,buf_run_ptr,input_buf_ptr);
     leng=strlen("e_x");
 
-  if((*(buf_run_ptr-leng) == 'e') && (*(buf_run_ptr-leng+1)== '_') && (*(buf_run_ptr-leng+2)=='x'))
+  if((*(buf_run_ptr-leng-1) == 'e') && (*(buf_run_ptr-leng)== '_') && (*(buf_run_ptr-leng+1)=='x'))
   {
-    *(input_buf_ptr+strlen(input_buf_ptr)-3)='\0';/* cut the e_x part*/
+    *(input_buf_ptr+strlen(input_buf_ptr)-5)='\0';/* cut the e_x part*/
     strcpy(message_buffer,input_buf_ptr);  
     printf("message_buffer=%s\n",message_buffer);
     msq_to_send.mtyp=1;
@@ -161,7 +161,8 @@ int receive_string(int fd)
 	  tcsetattr(fd, TCSANOW, &options);
 	  speed=cfgetospeed(&options);
 	  printf("baud rate = %0x\n",speed);
-	  /*Process the communication with message queues*/
+	  /*Process the communication with message queu
+  {es*/
 
 	  if ( server_kennung=(msgget(SERVER_KEY,IPC_CREAT|0666 )) ==-1){
 		  fprintf(stderr,"open server queue failed comtk.c\n");}

@@ -444,7 +444,7 @@ Tcl_AppInit(interp)
   Tcl_CreateCommand(interp,"receive_string",(Tcl_CmdProc *)call_get_receive_string,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
   Tcl_CreateCommand(interp,"unlink_receive_string",(Tcl_CmdProc *)call_unlink_receive_string,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
   Tcl_CreateCommand(interp,"unlink_send_string",(Tcl_CmdProc *)call_unlink_send_string,(ClientData) NULL,(Tcl_CmdDeleteProc *) NULL);
-  /*
+  /*sudo apt-get install tcl-dev
    * Call Tcl_CreateCommand for application-specific commands, if
    * they weren't already created by the init procedures called above.
    */

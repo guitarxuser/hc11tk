@@ -312,7 +312,7 @@ out_message  send_string(int fd,const char *inp_str)
   inp_str_len=strlen(bufptr);
   sprintf(text_begin,"%c",STX);
   sprintf(text_end,"%c",ETX);
-  sprintf(ascii_length,"%d",(int)inp_str_len);
+  sprintf(ascii_length,"%04u",(int)inp_str_len);
   fprintf(stderr,"ascii_length=%s\n",ascii_length);
   //buffer=malloc((size_t)inp_str_len+3+4096);/*aligned biffer to 4K+3 bytes for strlen(e_x)=3*/
  // strcpy(bufptr,inp_str);

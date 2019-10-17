@@ -60,11 +60,12 @@ int receive_string(int fd)
 {
   size_t  nbytes;       /* Number of bytes read */
   size_t nbytes_per_read_seq; 
-  char buffer[MAX_LINE];
+  char buffer[MAX_LINE]={'0'};
 
   char *bufptr ;      /* Current char in buffer */
   char *input_buf_ptr;
-
+  char *pos_e_x;
+  char *ptr;
   int max_count=0;
   FILE* fd_exc;
   char *name_fd_exc ="exch_data";
@@ -72,7 +73,9 @@ int receive_string(int fd)
   int server_kennung ;
   int long leng;
   int comp_erg;
-
+  long msg_len;
+  char *msg_len_str_ptr;
+  char msg_len_str[10]={'0'};
   message_q msq_to_send;
   input_buf_ptr=input_buffer;
   bufptr=buffer;
@@ -93,10 +96,14 @@ int receive_string(int fd)
 
     printf("nbytes=%d\n   buf_run_ptr=%p input_buf_ptr =%p\n",(int)nbytes,buf_run_ptr,input_buf_ptr);
     leng=strlen("e_x");
-
-  if((*(buf_run_ptr-leng-1) == 'e') && (*(buf_run_ptr-leng)== '_') && (*(buf_run_ptr-leng+1)=='x'))
-  {
-    *(input_buf_ptr+strlen(input_buf_ptr)-5)='\0';/* cut the e_x part*/
+    pos_e_x=strstr(bufptr, "e_x");
+  if(pos_e_x){
+  //if((*(buf_run_ptr-leng-1) == 'e') && (*(buf_run_p)tr-leng)== '_') && (*(buf_run_ptr-leng+1)=='x'))
+  //{
+	  msg_len_str_ptr=msg_len_str;
+	 strncpy(msg_len_str_ptr,pos_e_x-4,4);
+	 msg_len = strtol(msg_len_str_ptr, &ptr, (int)10);
+    *(input_buf_ptr+msg_len)='\0';/* cut the e_x part*/
     strcpy(message_buffer,input_buf_ptr);  
     printf("message_buffer=%s\n",message_buffer);
     msq_to_send.mtyp=1;
@@ -105,11 +112,12 @@ int receive_string(int fd)
     printf("server_kennung ist %d\n",server_kennung);
     if(msgsnd(server_kennung,&msq_to_send,MAX_LINE,IPC_NOWAIT)==-1){
       fprintf(stderr,"msgsnd failed\n");
- 
+      return(1);
+    }
   }
     *input_buf_ptr='\0'; /*reset the input buffer*/
-  buf_run_ptr=input_buf_ptr;
-  }  
+    buf_run_ptr=input_buf_ptr;
+
  return (0);
 }
 /******S I G P O L L E R ************/
@@ -134,6 +142,7 @@ int receive_string(int fd)
 	  int    mod_answ;
 	  struct termios options;
 
+
 	  int pid;
 	  int server_kennung;
 	  int speed;
@@ -154,14 +163,15 @@ int receive_string(int fd)
 	  options.c_iflag     |= IGNCR;
 	  options.c_cc[VMIN]  = 1; /*1 byte*/
 	  options.c_cc[VTIME] = 0;/* no timeout*/
+
 	  options.c_ispeed=B9600;		/* input speed */
 	  options.c_ospeed=B9600;		/* output speed */
 	  /* set the options */
 	  cfsetospeed(&options,B9600);
 	  tcsetattr(fd, TCSANOW, &options);
 	  speed=cfgetospeed(&options);
-	  printf("baud rate = %0x\n",speed);
-	  /*Process the communication with message queu
+	  printf("baud rate = %d\n",speed);
+	  /*Process the communication with message queue
   {es*/
 
 	  if ( server_kennung=(msgget(SERVER_KEY,IPC_CREAT|0666 )) ==-1){
